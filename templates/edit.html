@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<header class="body">
-    <h1>Editing</h1>
-    <!-- <link rel="stylesheet" href="/static/style.css" /> -->
-</header>
-<section id="body">
-    <form method="post">
-        <textarea id="content" name="content" rows="20" cols="100">{{ content }}</textarea><br><br>
-        <input type="submit" value="Submit">
-    </form>
-</section>
+<div class="container px-3">
+    <header class="body">
+        <h1>Editing</h1>
+    </header>
+    <section id="body">
+        <form method="post">
+            <textarea id="content" name="content" rows="20" cols="100">{{ content }}</textarea><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </section>
+</div>
 {% endblock %}
 
