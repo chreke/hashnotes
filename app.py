@@ -8,7 +8,6 @@ from flask import (
     redirect,
     render_template,
     request,
-    url_for,
 )
 from pathlib import Path
 from werkzeug.security import safe_join
@@ -36,7 +35,7 @@ def edit(filename):
         digest = get_digest(content)
         with open(f"notes/{digest}", "w") as f:
             f.write(content)
-        return redirect(url_for("edit", filename=digest))
+        return redirect(f"/{digest}")
     content = ""
     file_path = safe_join("notes", filename)
     if not file_path:
