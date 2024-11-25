@@ -1,11 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<header class="body">
-    <h1>Hello, world!</h1>
-    <link rel="stylesheet" href="/static/style.css" />
-</header>
-<section id="body">
-    <p>hello, world!</p>
-</section>
+<div class="container px-3">
+    <header class="body">
+        <h1 class="display-1">Hashnotes</h1>
+    </header>
+    <section id="body">
+        <h2>What is this?</h2>
+        <p>
+        Effortlessly create and share Markdown notes—no login required. Whether
+        you’re jotting down ideas, writing code snippets, or crafting longer
+        content for platforms like <strong>Twitter</strong> or
+        <strong>Bluesky</strong>, Hashnotes makes it easy to share
+        text online. Just write, share, and go. No accounts, no hassle.
+        </p>
+        <h2>How do I use it?</h2>
+        <p>Just hit the <a href="/edit"/>New</a> button to start creating a new
+        note. When you're done writing, hit "Submit" and you'll be taken to
+        your note, which you can share with the rest of the world. If you're
+        not happy with the result, hit "Edit" and draft a new version of the
+        note.
+        </p>
+        <h3>Important Note</h3>
+        <p>
+        <strong>Please be aware:</strong> Notes cannot currently be edited or
+        deleted after publishing. Make sure to double-check your content before
+        sharing. <em>Think twice, post once!</em>
+        </p>
+    </section>
+</div>
 {% endblock %}
 
