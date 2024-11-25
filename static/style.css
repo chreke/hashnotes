@@ -11,3 +11,11 @@ blockquote {
 .footnote-backref {
     text-decoration: none;
 }
+
+.content img {
+    display: block;
+    margin: 0 auto;
+    padding: 1rem;
+    max-height: 36rem;
+    max-width: 80%;
+}
