@@ -17,6 +17,16 @@ app = Flask(__name__)
 def ensure_dir_exists(path):
     path.mkdir(parents=True, exist_ok=True)
 
+def get_note_path(filename):
+    if file_path := safe_join("notes", filename):
+        path = Path(file_path)
+        if not path.exists():
+            return None
+        else:
+            return path
+    return None
+
+
 def get_digest(content):
     digest = hashlib.sha256(content.encode("utf-8")).digest()
     return base64.urlsafe_b64encode(digest).decode("ascii")
@@ -36,11 +46,10 @@ def edit(filename):
         with open(f"notes/{digest}", "w") as f:
             f.write(content)
         return redirect(f"/{digest}")
-    content = ""
-    file_path = safe_join("notes", filename)
-    if not file_path:
-        abort(404)
     if filename:
+        file_path = get_note_path(filename)
+        if not file_path:
+            abort(404)
         with open(file_path, "r") as f:
             content = f.read()
     return render_template("edit.html", content=content)
@@ -51,10 +60,10 @@ def edit(filename):
 # but this would not be compatible with the idea of "deleting" content)
 @app.route("/<filename>", methods=["GET"])
 def view(filename):
-    file_path = safe_join("notes", filename)
-    if not file_path:
+    path = get_note_path(filename)
+    if not path:
         abort(404)
-    with open(file_path, "r") as f:
+    with open(path, "r") as f:
         content = markdown.markdown(
             f.read(),
             extensions=[
