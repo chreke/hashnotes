@@ -9,10 +9,43 @@ from flask import (
     render_template,
     request,
 )
+from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
+from markupsafe import Markup
 from pathlib import Path
 from werkzeug.security import safe_join
 
 app = Flask(__name__)
+
+class ExtractMetaProcessor(Treeprocessor):
+    @staticmethod
+    def clean_string(string):
+        return Markup(string).striptags()
+
+    def run(self, root):
+        metadata = {}
+        first_heading = None
+        first_paragraph = None
+
+        for element in root:
+            if element.tag == 'h1' and first_heading is None:
+                if element.text:
+                    first_heading = self.clean_string(element.text)
+            elif element.tag == 'p' and first_paragraph is None:
+                if element.text:
+                    first_paragraph = self.clean_string(element.text)
+
+            if first_heading and first_paragraph:
+                break
+
+        metadata["title"] = first_heading
+        metadata["description"] = first_paragraph
+        setattr(self.md, "metadata", metadata)
+        return None
+
+class ExtractMeta(Extension):
+    def extendMarkdown(self, md):
+        md.treeprocessors.register(ExtractMetaProcessor(md), "extract_meta", 150)
 
 def ensure_dir_exists(path):
     path.mkdir(parents=True, exist_ok=True)
@@ -64,22 +97,25 @@ def view(filename):
     if not path:
         abort(404)
     with open(path, "r") as f:
-        content = markdown.markdown(
-            f.read(),
+        md = markdown.Markdown(
             extensions=[
                 "fenced_code",
                 "codehilite",
                 "smarty",
                 "toc",
                 "footnotes",
-        ])
+                ExtractMeta(),
+            ])
+        content = md.convert(f.read())
+        metadata = getattr(md, "metadata")
+    print("metadata", metadata)
     return render_template(
-        "view.html", filename=filename, content=content)
-
-
-# @app.route("/static/<path:path>")
-# def static(path):
-#     return send_from_directory("static", path)
+        "view.html",
+        filename=filename,
+        content=content,
+        title=metadata["title"],
+        description=metadata["description"],
+    )
 
 # NOTE: Ensure that dir exists on startup
 ensure_dir_exists(Path("notes"))
