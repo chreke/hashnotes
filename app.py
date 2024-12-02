@@ -66,15 +66,21 @@ def get_digest(content):
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        title="Hashnotes",
+        description="The easy way to share text online",
+    )
 
-# TODO: Add upper limit for text size
 @app.route("/edit/", methods=["GET", "POST"], defaults={"filename": ""})
 @app.route("/edit/<filename>", methods=["GET", "POST"])
 def edit(filename):
     content = ""
     if request.method == "POST":
         content = request.form["content"]
+        # TODO: Proper form handling
+        if len(content) > 10000:
+            abort(400)
         digest = get_digest(content)
         with open(f"notes/{digest}", "w") as f:
             f.write(content)
