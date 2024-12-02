@@ -28,12 +28,10 @@ class ExtractMetaProcessor(Treeprocessor):
         first_paragraph = None
 
         for element in root:
-            if element.tag == 'h1' and first_heading is None:
-                if element.text:
-                    first_heading = self.clean_string(element.text)
-            elif element.tag == 'p' and first_paragraph is None:
-                if element.text:
-                    first_paragraph = self.clean_string(element.text)
+            if element.tag == 'h1' and not first_heading:
+                first_heading = "".join(element.itertext())
+            elif element.tag == 'p' and not first_paragraph:
+                first_paragraph = "".join(element.itertext())
 
             if first_heading and first_paragraph:
                 break
@@ -41,11 +39,15 @@ class ExtractMetaProcessor(Treeprocessor):
         metadata["title"] = first_heading
         metadata["description"] = first_paragraph
         setattr(self.md, "metadata", metadata)
+        print("meta data", metadata)
         return None
 
 class ExtractMeta(Extension):
     def extendMarkdown(self, md):
-        md.treeprocessors.register(ExtractMetaProcessor(md), "extract_meta", 150)
+        # NOTE: Priority needs to be lower than the inline tag processor to
+        # make sure inline elements are converted to HTML tags before we try to
+        # extract metadata
+        md.treeprocessors.register(ExtractMetaProcessor(md), "extract_meta", 10)
 
 def ensure_dir_exists(path):
     path.mkdir(parents=True, exist_ok=True)
