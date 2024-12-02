@@ -39,7 +39,6 @@ class ExtractMetaProcessor(Treeprocessor):
         metadata["title"] = first_heading
         metadata["description"] = first_paragraph
         setattr(self.md, "metadata", metadata)
-        print("meta data", metadata)
         return None
 
 class ExtractMeta(Extension):
