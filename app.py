@@ -85,7 +85,7 @@ def edit(filename):
             abort(404)
         with open(file_path, "r") as f:
             content = f.read()
-    return render_template("edit.html", content=content)
+    return render_template("edit.html", title="Edit", content=content)
 
 # TODO: Cache rendered Markdown somehow (add Nginx file cache?)
 # TODO: Support deleting content by adding a "blocklist"
@@ -113,7 +113,7 @@ def view(filename):
         "view.html",
         filename=filename,
         content=content,
-        title=metadata["title"],
+        title=metadata["title"] or "Note",
         description=metadata["description"],
     )
 
