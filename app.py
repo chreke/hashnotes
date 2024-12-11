@@ -115,7 +115,6 @@ def view(filename):
             ])
         content = md.convert(f.read())
         metadata = getattr(md, "metadata")
-    print("metadata", metadata)
     return render_template(
         "view.html",
         filename=filename,
